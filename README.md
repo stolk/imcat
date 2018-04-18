@@ -1,6 +1,6 @@
 # imcat
 
-Show any size image in a terminal window. No X11 required.
+Preview any size image in a terminal window. No X11 required.
 
 
 ![Sample use](images/sampledesktop.png "Sample use.")
