@@ -1,3 +1,8 @@
+// imcat.c
+//
+// by Abraham Stolk.
+// This software is in the Public Domain.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
