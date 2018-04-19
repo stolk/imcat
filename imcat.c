@@ -8,10 +8,50 @@
 #include <assert.h>
 #include <math.h>
 
+#if defined(_WIN64)
+#	define STBI_NO_SIMD
+#endif
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 static int termw=0, termh=0;
+
+#if defined(_WIN64)
+#	include <windows.h>
+static void get_terminal_size(void)
+{
+	const HANDLE hStdout = GetStdHandle( STD_OUTPUT_HANDLE );
+	CONSOLE_SCREEN_BUFFER_INFO info;
+	GetConsoleScreenBufferInfo( hStdout, &info );
+	termw = info.dwSize.X;
+	termh = info.dwSize.Y;
+	if ( !termw ) termw = 80;
+}
+static void set_console_mode(void)
+{
+	int mode=0;
+	const HANDLE hStdout = GetStdHandle( STD_OUTPUT_HANDLE );
+	GetConsoleMode( hStdout, &mode );
+	mode = mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+	SetConsoleMode( hStdout, mode );
+}
+#else
+static void get_terminal_size(void)
+{
+	FILE* f = popen( "stty size", "r" );
+	if ( !f )
+	{
+		fprintf( stderr, "%s: Failed to determine terminal size using stty.\n", argv[0] );
+		exit( 1 );
+	}
+	const int num = fscanf( f, "%d %d", &termh, &termw );
+	assert( num == 2 );
+	pclose( f );
+}
+static void set_console_mode() {}
+#endif
+
+
 
 #define RESETALL  "\x1b[0m"
 
@@ -113,19 +153,14 @@ int main( int argc, char* argv[] )
 		exit( 0 );
 	}
 
+	// Step 0: Windows cmd.exe needs to be put in proper console mode.
+	set_console_mode();
+
 	// Step 1: figure out the width and height of terminal.
-	FILE* f = popen( "stty size", "r" );
-	if ( !f )
-	{
-		fprintf( stderr, "%s: Failed to determine terminal size using stty.\n", argv[0] );
-		exit( 1 );
-	}
-	const int num = fscanf( f, "%d %d", &termh, &termw );
-	assert( num == 2 );
-	pclose( f );
+	get_terminal_size();
+	//fprintf( stderr, "Your terminal is size %dx%d\n", termw, termh );
 
-	fprintf( stderr, "Your terminal is size %dx%d\n", termw, termh );
-
+	// Step 2: Process all images on the command line.
 	for ( int i=1; i<argc; ++i )
 	{
 		const char* nm = argv[ i ];
