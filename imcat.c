@@ -53,7 +53,10 @@ static void get_terminal_size(void)
 	assert( num == 2 );
 	pclose( f );
 }
-static void set_console_mode() {}
+static void set_console_mode()
+{
+	doubleres=1;
+}
 #endif
 
 
@@ -88,6 +91,11 @@ static void print_image_single_res( int w, int h, unsigned char* data )
 	assert( reader = data + w * h * 4 );
 }
 
+#if defined(_WIN64)
+#	define HALFBLOCK "\xdf"		// Uses IBM PC Codepage 437 char 223
+#else
+#	define HALFBLOCK "▀"		// Uses Unicode char U+2580
+#endif
 
 static void print_image_double_res( int w, int h, unsigned char* data )
 {
@@ -121,7 +129,7 @@ static void print_image_double_res( int w, int h, unsigned char* data )
 			b = *row1++;
 			a = *row1++;
 			(void) a;
-			snprintf( tripl, sizeof(tripl), "%d;%d;%dm\xdf", r,g,b );
+			snprintf( tripl, sizeof(tripl), "%d;%d;%dm" HALFBLOCK, r,g,b );
 			strncat( line, tripl, sizeof(line) - strlen(line) - 1 );
 		}
 		strncat( line, RESETALL, sizeof(line) - strlen(line) - 1 );
