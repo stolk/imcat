@@ -24,7 +24,7 @@ imcat also works on the latest version of Windows 10.
 
 ## Todo
 
--
+* Handle alpha-transparency. Requires reading the terminal background colour, somehow. Tricky.
 
 ## Done
 
