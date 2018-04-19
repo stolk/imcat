@@ -41,7 +41,7 @@ static void get_terminal_size(void)
 	FILE* f = popen( "stty size", "r" );
 	if ( !f )
 	{
-		fprintf( stderr, "%s: Failed to determine terminal size using stty.\n", argv[0] );
+		fprintf( stderr, "Failed to determine terminal size using stty.\n" );
 		exit( 1 );
 	}
 	const int num = fscanf( f, "%d %d", &termh, &termw );
