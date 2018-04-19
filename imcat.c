@@ -15,6 +15,7 @@
 #include "stb_image.h"
 
 static int termw=0, termh=0;
+static int doubleres=0;
 
 #if defined(_WIN64)
 #	include <windows.h>
@@ -27,13 +28,17 @@ static void get_terminal_size(void)
 	termh = info.dwSize.Y;
 	if ( !termw ) termw = 80;
 }
+static int oldcodepage=0;
 static void set_console_mode(void)
 {
-	int mode=0;
+	DWORD mode=0;
 	const HANDLE hStdout = GetStdHandle( STD_OUTPUT_HANDLE );
 	GetConsoleMode( hStdout, &mode );
 	mode = mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 	SetConsoleMode( hStdout, mode );
+	oldcodepage = GetConsoleCP();
+	SetConsoleCP( 437 );
+	doubleres = 1;
 }
 #else
 static void get_terminal_size(void)
@@ -56,7 +61,7 @@ static void set_console_mode() {}
 #define RESETALL  "\x1b[0m"
 
 
-static void print_image( int w, int h, unsigned char* data )
+static void print_image_single_res( int w, int h, unsigned char* data )
 {
 	const int linesz = 16384;
 	char line[ linesz ];
@@ -81,6 +86,47 @@ static void print_image( int w, int h, unsigned char* data )
 		puts( line );
 	}
 	assert( reader = data + w * h * 4 );
+}
+
+
+static void print_image_double_res( int w, int h, unsigned char* data )
+{
+	if ( h & 1 )
+		h--;
+	const int linesz = 32768;
+	char line[ linesz ];
+
+
+	for ( int y=0; y<h; y+=2 )
+	{
+		const unsigned char* row0 = data + (y+0) * w * 4;
+		const unsigned char* row1 = data + (y+1) * w * 4;
+		line[0] = 0;
+		for ( int x=0; x<w; ++x )
+		{
+			// foreground colour.
+			strncat( line, "\x1b[38;2;", sizeof(line) - strlen(line) - 1 );
+			char tripl[80];
+			unsigned char r = *row0++;
+			unsigned char g = *row0++;
+			unsigned char b = *row0++;
+			unsigned char a = *row0++;
+			(void) a;
+			snprintf( tripl, sizeof(tripl), "%d;%d;%dm", r,g,b );
+			strncat( line, tripl, sizeof(line) - strlen(line) - 1 );
+			// background colour.
+			strncat( line, "\x1b[48;2;", sizeof(line) - strlen(line) - 1 );
+			r = *row1++;
+			g = *row1++;
+			b = *row1++;
+			a = *row1++;
+			(void) a;
+			snprintf( tripl, sizeof(tripl), "%d;%d;%dm\xdf", r,g,b );
+			strncat( line, tripl, sizeof(line) - strlen(line) - 1 );
+		}
+		strncat( line, RESETALL, sizeof(line) - strlen(line) - 1 );
+		puts( line );
+	}
 }
 
 
@@ -140,7 +186,10 @@ static int process_image( const char* nm )
 	stbi_image_free( data );
 	data = 0;
 
-	print_image( outw, outh, (unsigned char*) out );
+	if ( doubleres )
+		print_image_double_res( outw, outh, (unsigned char*) out );
+	else
+		print_image_single_res( outw, outh, (unsigned char*) out );
 	return 0;
 }
 
@@ -168,6 +217,10 @@ int main( int argc, char* argv[] )
 		if ( rv < 0 )
 			fprintf( stderr, "Could not load image %s\n", nm );
 	}
+
+#if defined(_WIN64)
+	SetConsoleCP( oldcodepage );
+#endif
 
 	return 0;
 }
