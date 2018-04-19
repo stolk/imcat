@@ -22,8 +22,12 @@ It automatically resizes to the width of your terminal, using proper sampling ke
 
 imcat also works on the latest version of Windows 10.
 
+## Todo
 
-## To do
+-
+
+## Done
+
 * Correct for aspect ratio of terminal font.
 
 ## Building
