@@ -28,9 +28,11 @@ imcat also works on the latest version of Windows 10.
 
 ## Building
 
-On linux, just use 'make' to build the imcat binary.
+### Unix
+On Linux, just use 'make' to build the imcat binary.
 
-On Windows, you need clang.exe from Visual Studio 2017 to build the imcat.exe binary.
+### Windows 10
+On Windows, you need clang.exe from Visual Studio 2017 to build the imcat.exe binary. It's actually quite hard to get that compiler working, so you may just as well grab the pre-built <A HREF="https://stolk.org/imcat/imcat.exe">imcat.exe</A> binary.
 
 ## License
 
@@ -42,4 +44,7 @@ On Windows, you need clang.exe from Visual Studio 2017 to build the imcat.exe bi
 
 [stb_image.h](http://nothings.org/stb_image.h) is by Sean Barrett et al.
 
+## Acknoledgements
+
+A shout out to [Frogtoss](http://github.com/mlabbe) for the idea and help. Thanks!
 
