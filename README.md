@@ -3,7 +3,7 @@
 Preview any size image in a terminal window.
 
 
-![Sample use](images/sampledesktop.png "Sample use.")
+![imcat tiger](images/imcat_tiger.png "imcat tiger")
 
 # Platform
 
@@ -21,6 +21,18 @@ imcat is a 24-bit image viewer that uses ANSI terminal colours to display any im
 It automatically resizes to the width of your terminal, using proper sampling kernels.
 
 imcat also works on the latest version of Windows 10.
+
+## Usage
+
+```
+$ imcat file1 [file2 .. fileN]
+```
+
+If you want to blend the image with the terminal background, then you need to specify the background color of your terminal. For instance:
+
+```
+$ export IMCATBG="#dad9cc"
+```
 
 ## Todo
 
@@ -48,7 +60,11 @@ On Windows, you need clang.exe from Visual Studio 2017 to build the imcat.exe bi
 
 [stb_image.h](http://nothings.org/stb_image.h) is by Sean Barrett et al.
 
-## Acknoledgements
+## Acknowledgements
 
 A shout out to [Frogtoss](http://github.com/mlabbe) for the idea and help. Thanks!
+
+## Gallery
+
+![Sample use](images/sampledesktop.png "Sample use.")
 
