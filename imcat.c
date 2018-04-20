@@ -99,9 +99,10 @@ static void print_image_single_res( int w, int h, unsigned char* data )
 #	define HALFBLOCK "▀"		// Uses Unicode char U+2580
 #endif
 
+// Note: image has alpha pre-multied. Mimic GL_ONE + GL_ONE_MINUS_SRC_ALPHA
 #define BLEND \
 { \
-	const int t0 = a; \
+	const int t0 = 255; \
 	const int t1 = 255-a; \
 	r = ( r * t0 + termbg[0] * t1 ) / 255; \
 	g = ( g * t0 + termbg[1] * t1 ) / 255; \
@@ -192,9 +193,10 @@ static int process_image( const char* nm )
 				for ( int xx = sx; xx <= ex; ++xx )
 				{
 					unsigned char* reader = data + ( yy * imw * 4 ) + xx * 4;
-					acc[ 0 ] += reader[0];
-					acc[ 1 ] += reader[1];
-					acc[ 2 ] += reader[2];
+					const int a = reader[3];
+					acc[ 0 ] += a * reader[0] / 255;
+					acc[ 1 ] += a * reader[1] / 255;
+					acc[ 2 ] += a * reader[2] / 255;
 					acc[ 3 ] += reader[3];
 					numsamples++;
 				}
