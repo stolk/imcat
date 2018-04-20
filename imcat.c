@@ -16,6 +16,8 @@
 
 static int termw=0, termh=0;
 static int doubleres=0;
+static int blend=0;
+static unsigned char termbg[3] = { 0,0,0 };
 
 #if defined(_WIN64)
 #	include <windows.h>
@@ -97,6 +99,15 @@ static void print_image_single_res( int w, int h, unsigned char* data )
 #	define HALFBLOCK "▀"		// Uses Unicode char U+2580
 #endif
 
+#define BLEND \
+{ \
+	const int t0 = a; \
+	const int t1 = 255-a; \
+	r = ( r * t0 + termbg[0] * t1 ) / 255; \
+	g = ( g * t0 + termbg[1] * t1 ) / 255; \
+	b = ( b * t0 + termbg[2] * t1 ) / 255; \
+}
+
 static void print_image_double_res( int w, int h, unsigned char* data )
 {
 	if ( h & 1 )
@@ -119,7 +130,8 @@ static void print_image_double_res( int w, int h, unsigned char* data )
 			unsigned char g = *row0++;
 			unsigned char b = *row0++;
 			unsigned char a = *row0++;
-			(void) a;
+			if ( blend )
+				BLEND
 			snprintf( tripl, sizeof(tripl), "%d;%d;%dm", r,g,b );
 			strncat( line, tripl, sizeof(line) - strlen(line) - 1 );
 			// background colour.
@@ -128,7 +140,8 @@ static void print_image_double_res( int w, int h, unsigned char* data )
 			g = *row1++;
 			b = *row1++;
 			a = *row1++;
-			(void) a;
+			if ( blend )
+				BLEND
 			snprintf( tripl, sizeof(tripl), "%d;%d;%dm" HALFBLOCK, r,g,b );
 			strncat( line, tripl, sizeof(line) - strlen(line) - 1 );
 		}
@@ -208,6 +221,17 @@ int main( int argc, char* argv[] )
 	{
 		fprintf( stderr, "Usage: %s image [image2 .. imageN]\n", argv[0] );
 		exit( 0 );
+	}
+
+	// Parse environment variable for terminal background colour.
+	const char* imcatbg = getenv( "IMCATBG" );
+	if ( imcatbg )
+	{
+		const int bg = strtol( imcatbg+1, 0, 16 );
+		termbg[ 2 ] = ( bg >>  0 ) & 0xff;
+		termbg[ 1 ] = ( bg >>  8 ) & 0xff;
+		termbg[ 0 ] = ( bg >> 16 ) & 0xff;
+		blend = 1;
 	}
 
 	// Step 0: Windows cmd.exe needs to be put in proper console mode.
