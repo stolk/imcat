@@ -52,7 +52,7 @@ On Windows, you need clang.exe from Visual Studio 2017 to build the imcat.exe bi
 
 ## License
 
-* Public Domain.
+* [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
 
 ## Authors
 
