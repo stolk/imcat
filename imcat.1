@@ -1,0 +1,56 @@
+'\" t
+.\"     Title: imcat
+.\"    Author: Bram Stolk <b.stolk@gmail.com>
+.\"      Date: 2019-03-04
+.\"    Manual: Imcat Executable Programs
+.\"    Source: imcat github
+.\"  Language: English
+.\"
+.TH "IMCAT" "1" "2019\-03\-04" "imcat github" "Imcat Executable Program"
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.nh
+.ad l
+.\" -----------------------------------------------------------------
+.SH "NAME"
+imcat \- image concatenator for text terminals.
+.SH "SYNOPSIS"
+.HP \w'\fBimcat\fR\ 'u
+\fBimcat\fR [\fB\fI\-options\fR\fR] \fB\fIINFILE\fR\fR...
+.SH "DESCRIPTION"
+.PP
+\fBimcat\fR
+displays the specified images on a text terminal that supports colour.
+.SH "OPTIONS"
+.PP
+.PP
+\fB\--help\fR
+.RS 4
+shows command line syntax.
+.RE
+.PP
+.SH "ENVIRONMENT"
+.PP
+\fBIMCATBG\fR
+.PP
+Background colour to use when displaying transparent images.
+Set this to the background colour of the terminal.
+For instance, when using a white terminal background, like so:
+.PP
+$ export IMCATBG="#ffffff"
+.br
+$ imcat kitten.png
+.PP
+.SH "SEE ALSO"
+.PP
+\fBstty\fR(1)
+.PP
+Please visit github\&.com/stolk/imcat for more information
+.SH "AUTHOR"
+.PP
+\fBBram Stolk\fR <b\&.stolk@gmail\&.com\&>
+.RE
+.SH "COPYRIGHT"
+.br
+Copyright \(co 2018-2019 Bram Stolk. Licensed under CC0.
+.br
