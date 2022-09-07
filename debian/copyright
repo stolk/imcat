@@ -1,0 +1,11 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: imcat
+Upstream-Contact: Bram Stolk <b.stolk@gmail.com>
+Source: https://github.com/stolk/imcat
+
+Files: *
+Copyright: 2021-2022 Bram Stolk <b.stolk@gmail.com>
+License: CC0-1.0
+
+License: CC0-1.0
+ The person who associated a work with this deed has dedicated the work to the public domain by waiving all of his or her rights to the work worldwide under copyright law, including all related and neighboring rights, to the extent allowed by law.

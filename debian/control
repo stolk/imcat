@@ -1,0 +1,15 @@
+Source: imcat
+Section: contrib/utils
+Priority: optional
+Maintainer: Bram Stolk <bram.stolk@canonical.com>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13)
+Standards-Version: 4.6.1
+Homepage: https://github.com/stolk/imcat
+
+Package: imcat
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Shows images in a terminal.
+ Shows images in a terminal console that supports 24 bit colour.
