@@ -1,3 +1,9 @@
+imcat (1.5-1) kinetic; urgency=medium
+
+  * Added manpage.
+
+ -- Bram Stolk <bram.stolk@canonical.com>  Wed, 07 Sep 2022 18:16:00 -0700
+
 imcat (1.4-1) kinetic; urgency=medium
 
   * Initial release.
