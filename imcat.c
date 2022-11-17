@@ -21,7 +21,8 @@ static int blend=0;
 static unsigned char termbg[3] = { 0,0,0 };
 // variables to hold user passed width and height
 static int uw=-1, uh=-1;
-
+// variable to hold flag state
+static int do_fit=-1;
 
 #if defined(_WIN64)
 #	include <windows.h>
@@ -168,7 +169,21 @@ static int process_image( const char* nm )
 
 	float aspectratio = imw / (float) imh;
 
-	if ( uw != -1 )
+	if ( do_fit != -1)
+	{
+		if ( (float) termw / (float) termh < aspectratio )
+		{
+			outw = imw < termw ? imw : termw;
+			outh = (int) roundf( outw / aspectratio );
+		}
+		else
+		{
+			int adj_h = doubleres ? termh * 2 : termh;
+			outh = imh < adj_h ? imh : adj_h;
+			outw = (int) roundf( outh * aspectratio );
+		}
+	}
+	else if ( uw != -1 )
 	{
 		outw = uw;
 		outh = (int) roundf( outw / aspectratio );
@@ -239,7 +254,7 @@ static int process_image( const char* nm )
 
 int get_int( const char* num,const char* msg )
 {
-    // Code loosely based on strtol's man page
+	// Code loosely based on strtol's man page
 	char *endptr;
 	long val;
 
@@ -266,17 +281,22 @@ int main( int argc, char* argv[] )
 						 "Displays image in terminal\n\nOptions:\n"
 						 " -h, --height   set height of output image (image will maintain aspect ratio)\n"
 						 " -w, --width    set width of output image (image will maintain aspect ratio)\n"
-						 "     --help     display this help and exit\n\n",
+						 " -f, --fit      fit image to console size"
+						 "	 --help       display this help and exit\n\n",
 				 argv[0] );
 		exit( 0 );
 	}
 
 	// Get location and value of passed flags
-	int hloc=-1, wloc=-1;
+	int hloc=-1, wloc=-1, floc=-1;
 	for ( int i=1; i<argc; ++i )
 	{
-
-		if ( !strcmp( argv[i], "-w" ) || !strcmp( argv[i], "--width" ) )
+		if ( !strcmp( argv[i], "-f" ) || !strcmp( argv[i], "--fit" ) )
+		{
+			floc = i;
+			do_fit = 1;
+		}
+		else if ( !strcmp( argv[i], "-w" ) || !strcmp( argv[i], "--width" ) )
 		{
 			wloc = i;
 			if ( i+1 < argc )
@@ -325,8 +345,8 @@ int main( int argc, char* argv[] )
 	// Step 2: Process all images on the command line.
 	for ( int i=1; i<argc; ++i )
 	{
-	    // Ignore arguments that are not image paths
-		if ( i == hloc || i == hloc + 1 || i == wloc || i == wloc + 1 )
+		// Ignore arguments that are not image paths
+		if ( i == hloc || i == hloc + 1 || i == wloc || i == wloc + 1 || i == floc )
 		{
 			continue;
 		}
