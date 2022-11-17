@@ -28,15 +28,15 @@ imcat also works on the latest version of Windows 10.
 $ imcat [options] file1 [file2 .. fileN]
 ```
 
-Use `-h {NUM}` and `-w {NUM}` specify the height or width of the output image respectively. Note: only width will be
+Use `-h {NUM}` and `-w {NUM}` specify the height or width of the output image respectively. Note: only `width` will be
 used if both dimensions are passed.
 
 ```
 $ imcat -w 10 {IMG_PATH}
 ```
 
-Use `-f` or `--fit` to have the output image fit to the console size. Note: fit will override both height and width 
-arguments
+Use `-f` or `--fit` to have the output image fit to the console size. Note: `fit` will override both `height` and 
+`width` arguments.
 
 ```
 $ imcat -f {IMG_PATH}
