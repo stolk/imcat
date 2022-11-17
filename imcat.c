@@ -298,6 +298,13 @@ int main( int argc, char* argv[] )
 		}
 		else if ( !strcmp( argv[i], "-w" ) || !strcmp( argv[i], "--width" ) )
 		{
+			// Check to see if argument has already been passed
+			if ( wloc != -1 )
+			{
+				fprintf( stderr, "Width argument passed multiple times\n");
+				exit(1);
+			}
+
 			wloc = i;
 			if ( i+1 < argc )
 			{
@@ -311,6 +318,13 @@ int main( int argc, char* argv[] )
 		}
 		else if ( !strcmp( argv[i], "-h" ) || !strcmp( argv[i], "--height" ) )
 		{
+			// Check to see if argument has already been passed
+			if ( hloc != -1 )
+			{
+				fprintf( stderr, "Height argument passed multiple times\n");
+				exit(1);
+			}
+
 			hloc = i;
 			if ( i+1 < argc )
 			{
