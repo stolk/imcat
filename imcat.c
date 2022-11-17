@@ -171,14 +171,14 @@ static int process_image( const char* nm )
 
 	if ( do_fit != -1)
 	{
-		if ( (float) termw / (float) termh < aspectratio )
+		int adj_h = doubleres ? termh * 2 : termh;
+		if ( ( (float) termw / (float) adj_h ) < aspectratio )
 		{
 			outw = imw < termw ? imw : termw;
 			outh = (int) roundf( outw / aspectratio );
 		}
 		else
 		{
-			int adj_h = doubleres ? termh * 2 : termh;
 			outh = imh < adj_h ? imh : adj_h;
 			outw = (int) roundf( outh * aspectratio );
 		}
