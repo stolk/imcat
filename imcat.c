@@ -279,10 +279,10 @@ int main( int argc, char* argv[] )
 		fprintf( stderr, "Usage:\n"
 						 " %s image [options] [image2 .. imageN]\n"
 						 "Displays image in terminal\n\nOptions:\n"
+						 " -f, --fit      fit image to console size\n"
 						 " -h, --height   set height of output image (image will maintain aspect ratio)\n"
 						 " -w, --width    set width of output image (image will maintain aspect ratio)\n"
-						 " -f, --fit      fit image to console size"
-						 "	 --help       display this help and exit\n\n",
+						 "     --help     display this help and exit\n\n",
 				 argv[0] );
 		exit( 0 );
 	}
