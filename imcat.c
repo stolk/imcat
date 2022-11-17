@@ -293,6 +293,12 @@ int main( int argc, char* argv[] )
 	{
 		if ( !strcmp( argv[i], "-f" ) || !strcmp( argv[i], "--fit" ) )
 		{
+			// Check to see if argument has already been passed
+			if ( floc != -1 )
+			{
+				fprintf( stderr, "Fit argument passed multiple times\n");
+				exit(1);
+			}
 			floc = i;
 			do_fit = 1;
 		}
