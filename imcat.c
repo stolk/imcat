@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>
+#include <errno.h> // Needed for strtol error checking in get_int function
 
 #if defined(_WIN64)
 #	define STBI_NO_SIMD
@@ -18,6 +19,9 @@ static int termw=0, termh=0;
 static int doubleres=0;
 static int blend=0;
 static unsigned char termbg[3] = { 0,0,0 };
+// variables to hold user passed width and height
+static int uw=-1, uh=-1;
+
 
 #if defined(_WIN64)
 #	include <windows.h>
@@ -155,21 +159,37 @@ static void print_image_double_res( int w, int h, unsigned char* data )
 static int process_image( const char* nm )
 {
 	int imw=0,imh=0,n=0;
+	int outw, outh;
+
 	unsigned char *data = stbi_load( nm, &imw, &imh, &n, 4 );
 	if ( !data )
 		return -1;
 	//fprintf( stderr, "%s has dimension %dx%d w %d components.\n", nm, imw, imh, n );
 
 	float aspectratio = imw / (float) imh;
-	float pixels_per_char = imw / (float)termw;
+
+	if ( uw != -1 )
+	{
+		outw = uw;
+		outh = (int) roundf( outw / aspectratio );
+	}
+	else if ( uh != -1 )
+	{
+		outh = uh;
+		outw = (int) roundf( outh * aspectratio );
+	}
+	else
+	{
+		outw = imw < termw ? imw : termw;
+		outh = (int) roundf( outw / aspectratio );
+	}
+
+	float pixels_per_char = imw / (float)outw;
 	if ( pixels_per_char < 1 ) pixels_per_char = 1;
 	int kernelsize = (int) floorf( pixels_per_char );
 	if ( (kernelsize&1) == 0 ) kernelsize--;
 	if ( !kernelsize ) kernelsize=1;
 	const int kernelradius = (kernelsize-1)/2;
-
-	const int outw = imw < termw ? imw : termw;
-	const int outh = (int) roundf( outw / aspectratio );
 
 	//fprintf( stderr, "pixels per char: %f, kernelsize: %d, out: %dx%d\n", pixels_per_char, kernelsize, outw, outh );
 
@@ -217,12 +237,71 @@ static int process_image( const char* nm )
 }
 
 
+int get_int( const char* num,const char* msg )
+{
+    // Code loosely based on strtol's man page
+	char *endptr;
+	long val;
+
+	errno = 0; // Catches error status from next line
+	val = strtol( num, &endptr, 10 );
+
+	// check for possible errors
+	if ( errno != 0 || endptr == num ) {
+		fprintf( stderr, msg, num );
+		exit( 1 );
+	}
+
+	return val;
+}
+
+
+
 int main( int argc, char* argv[] )
 {
 	if ( argc == 1 || !strcmp( argv[1], "--help" ) )
 	{
-		fprintf( stderr, "Usage: %s image [image2 .. imageN]\n", argv[0] );
+		fprintf( stderr, "Usage:\n"
+						 " %s image [options] [image2 .. imageN]\n"
+						 "Displays image in terminal\n\nOptions:\n"
+						 " -h, --height   set height of output image (image will maintain aspect ratio)\n"
+						 " -w, --width    set width of output image (image will maintain aspect ratio)\n"
+						 "     --help     display this help and exit\n\n",
+				 argv[0] );
 		exit( 0 );
+	}
+
+	// Get location and value of passed flags
+	int hloc=-1, wloc=-1;
+	for ( int i=1; i<argc; ++i )
+	{
+
+		if ( !strcmp( argv[i], "-w" ) || !strcmp( argv[i], "--width" ) )
+		{
+			wloc = i;
+			if ( i+1 < argc )
+			{
+				uw = get_int( argv[i+1], "Invalid width value \"%s\"\n" );
+			}
+			else
+			{
+				fprintf( stderr, "Missing width value\n" );
+				exit( -1 );
+			}
+		}
+		else if ( !strcmp( argv[i], "-h" ) || !strcmp( argv[i], "--height" ) )
+		{
+			hloc = i;
+			if ( i+1 < argc )
+			{
+				uh = get_int( argv[i+1], "Invalid height value \"%s\"\n" );
+			}
+			else
+			{
+				fprintf( stderr, "Missing height value\n" );
+				exit( -1 );
+			}
+		}
 	}
 
 	// Parse environment variable for terminal background colour.
@@ -246,6 +325,11 @@ int main( int argc, char* argv[] )
 	// Step 2: Process all images on the command line.
 	for ( int i=1; i<argc; ++i )
 	{
+	    // Ignore arguments that are not image paths
+		if ( i == hloc || i == hloc + 1 || i == wloc || i == wloc + 1 )
+		{
+			continue;
+		}
 		const char* nm = argv[ i ];
 		int rv = process_image( nm );
 		if ( rv < 0 )
@@ -258,4 +342,3 @@ int main( int argc, char* argv[] )
 
 	return 0;
 }
-
