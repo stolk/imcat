@@ -35,6 +35,13 @@ used if both dimensions are passed.
 $ imcat -w 10 {IMG_PATH}
 ```
 
+Use `-f` or `--fit` to have the output image fit to the console size. Note: fit will override both height and width 
+arguments
+
+```
+$ imcat -f {IMG_PATH}
+```
+
 If you want to blend the image with the terminal background, then you need to specify the background color of your terminal. For instance:
 
 ```
