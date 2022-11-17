@@ -277,7 +277,7 @@ int main( int argc, char* argv[] )
 	if ( argc == 1 || !strcmp( argv[1], "--help" ) )
 	{
 		fprintf( stderr, "Usage:\n"
-						 " %s image [options] [image2 .. imageN]\n"
+						 " %s [options] image [image2 .. imageN]\n"
 						 "Displays image in terminal\n\nOptions:\n"
 						 " -f, --fit      fit image to console size\n"
 						 " -h, --height   set height of output image (image will maintain aspect ratio)\n"
