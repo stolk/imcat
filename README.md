@@ -25,7 +25,14 @@ imcat also works on the latest version of Windows 10.
 ## Usage
 
 ```
-$ imcat file1 [file2 .. fileN]
+$ imcat [options] file1 [file2 .. fileN]
+```
+
+Use `-h {NUM}` and `-w {NUM}` specify the height or width of the output image respectively. Note: only width will be
+used if both dimensions are passed.
+
+```
+$ imcat -w 10 {IMG_PATH}
 ```
 
 If you want to blend the image with the terminal background, then you need to specify the background color of your terminal. For instance:
