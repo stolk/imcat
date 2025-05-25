@@ -1,3 +1,9 @@
+imcat (1.6-1) plucky; urgency=medium
+
+  * New build for plucky puffin.
+
+ -- Bram Stolk <b.stolk@gmail.com>  Sun, 25 May 2025 13:54:28 -0700
+
 imcat (1.5-1) kinetic; urgency=medium
 
   * Added manpage.
